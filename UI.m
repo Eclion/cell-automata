@@ -30,12 +30,13 @@ minSurvival = getFromConfigOrDefault('MIN_SURVIVAL',2);
 maxSurvival = getFromConfigOrDefault('MAX_SURVIVAL',3);
 minBirth = getFromConfigOrDefault('MIN_BIRTH',3);
 maxBirth = getFromConfigOrDefault('MAX_BIRTH',3);
-percentageSurvival = getFromConfigOrDefault('PERCENTAGE_SURVIVAL', []);
+percentageSurvival = getFromConfigOrDefault('PERCENTAGE_SURVIVAL', 0);
+percentageMove = getFromConfigOrDefault('PERCENTAGE_MOVEMENT', 0);
 enableSnapshots = strcmp(getFromConfigOrDefault('SAVE_SNAPSHOTS', 'OFF'), 'ON');
 
 handles2 = createRulesUI(handles);
 handles3 = createGraphicParamsUI(handles2, enableSnapshots, snapshotSteps);
-handles4 = createSimulationParamsUI(handles3, numberOfSimulations, numberOfSteps, initialNumberOfCells, percentageSurvival);
+handles4 = createSimulationParamsUI(handles3, numberOfSimulations, numberOfSteps, initialNumberOfCells, percentageSurvival, percentageMove);
 handles5 = createDishParamsUI(handles4, dishSize);
 
 guidata (f, handles5)
@@ -116,9 +117,9 @@ handles.birthPart5 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'u
 % ----- fifth rule ----------------------
 
 moveLineY = 0.25;
-handles.movePart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 moveLineY 0.18 lineSize], 'string', 'v) Any cell with < ', 'fontsize',10, 'horizontalalignment', 'left');
-handles.maxToMove = uicontrol ('parent', handles.rulePanel, 'style', 'edit', 'units', 'normalized', 'position', [0.20 moveLineY 0.09 lineSize], 'string', '3', 'fontsize',10, 'horizontalalignment', 'center', 'callback', @maxToMove_Callback);
-handles.movePart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 moveLineY 0.7 lineSize], 'string', 'live neighbors is able to move randomly to an empty cell on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
+%handles.movePart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 moveLineY 0.18 lineSize], 'string', 'v) Any cell with < ', 'fontsize',10, 'horizontalalignment', 'left');
+%handles.maxToMove = uicontrol ('parent', handles.rulePanel, 'style', 'edit', 'units', 'normalized', 'position', [0.20 moveLineY 0.09 lineSize], 'string', '3', 'fontsize',10, 'horizontalalignment', 'center', 'callback', @maxToMove_Callback);
+%handles.movePart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 moveLineY 0.7 lineSize], 'string', 'live neighbors is able to move randomly to an empty cell on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
 
 end
 function handles = createGraphicParamsUI(handles, enableSnapshots, snapshotSteps)
@@ -131,7 +132,7 @@ handles.snapshotStepsText = uicontrol ('parent', handles.graphicPanel, 'style', 
 handles.snapshotSteps = uicontrol ('parent', handles.graphicPanel, 'style', 'edit', 'units', 'normalized', 'position', [0.48 lineY 0.50 0.15], 'string', num2str(snapshotSteps), 'fontsize',10, 'horizontalalignment', 'center', 'callback', @snapshotSteps_Callback);
 
 end
-function handles = createSimulationParamsUI(handles, numberOfSimulations, numberOfSteps, initialNumberOfCells, percentageSurvival)
+function handles = createSimulationParamsUI(handles, numberOfSimulations, numberOfSteps, initialNumberOfCells, percentageSurvival, percentageMove)
 boxX = 0.70;
 textWidth = boxX - 0.03;
 boxWidth = 1 - boxX - 0.02;
@@ -157,6 +158,12 @@ fourthLineY = 0.15;
 handles.percentageSurvivalText = uicontrol ('parent', handles.simulationPanel, 'style', 'text', 'units', 'normalized', 'position', [0.02 fourthLineY textWidth height], 'string', '% of surviving cells [0-100]:', 'fontsize',10, 'horizontalalignment', 'left');
 
 handles.percentageSurvival = uicontrol ('parent', handles.simulationPanel, 'style', 'edit', 'units', 'normalized', 'position', [boxX fourthLineY boxWidth height], 'string', num2str(percentageSurvival), 'fontsize',10, 'horizontalalignment', 'center', 'callback', @percentageSurvival_Callback);
+
+
+fifthLineY = 0.0;
+handles.percentageMoveText = uicontrol ('parent', handles.simulationPanel, 'style', 'text', 'units', 'normalized', 'position', [0.02 fifthLineY textWidth height], 'string', 'movement probability [0-100]:', 'fontsize',10, 'horizontalalignment', 'left');
+
+handles.percentageMove = uicontrol ('parent', handles.simulationPanel, 'style', 'edit', 'units', 'normalized', 'position', [boxX fifthLineY boxWidth height], 'string', num2str(percentageMove), 'fontsize',10, 'horizontalalignment', 'center', 'callback', @percentageMove_Callback);
 end
 function handles = createDishParamsUI(handles, dishSize)
 boxX = 0.70;
@@ -320,6 +327,23 @@ if ~iscorrectnumber(percentageSurvival)
     errordlg('The percentage of survival cells at start must be a numbers', 'Error');
 else
     set(hObject, 'string', num2str(percentageSurvival));
+end
+
+guidata(hObject, handles)
+
+end
+
+function percentageMove_Callback(hObject, init)
+
+handles = guidata (hObject);
+
+percentageMove = str2num(get(hObject, 'string'));
+
+if ~iscorrectnumber(percentageMove)
+    set(hObject, 'string', '');
+    errordlg('The probability of cell movement must be a numbers', 'Error');
+else
+    set(hObject, 'string', num2str(percentageMove));
 end
 
 guidata(hObject, handles)
@@ -521,6 +545,7 @@ dishSize = str2num(get(handles.dishSize, 'string'));
 dishHeight = str2num(get(handles.dishHeight, 'string'));
 initNbCells = str2num(get(handles.initialNumberOfCells, 'string'));
 survivalPercentage = str2num(get(handles.percentageSurvival, 'string'));
+movePercentage = str2num(get(handles.percentageMove, 'string'));
 snapshotSteps = [];
 if(enableSnapshots)
     snapshotSteps = str2num(get(handles.snapshotSteps, 'string'));
@@ -536,7 +561,7 @@ birth = minBirth:maxBirth;
 % TODO rule maxToMove
 maxToMove=2;
     
-runSimulationBatch(handles, rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, enableSnapshots, snapshotSteps, maxToMove);
+runSimulationBatch(handles, rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, movePercentage, enableSnapshots, snapshotSteps, maxToMove);
 
 
 disp('End of the simulations.')

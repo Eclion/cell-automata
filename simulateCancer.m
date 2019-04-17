@@ -1,4 +1,4 @@
-function [ratio,nbCells,Mpercents] = simulateCancer(save2DSnapshots, dishSize, dishHeight, initialNumberOfCells, snapshotSteps,mean,survivalRules, birthRules, pMesen,folder,nbSteps,maxToMove)
+function [ratio,nbCells,Mpercents] = simulateCancer(save2DSnapshots, dishSize, dishHeight, initialNumberOfCells, snapshotSteps,mean,survivalRules, birthRules, pMove,folder,nbSteps,maxToMove)
 % In :
 %   * dishSize                - size of the square dish
 %   * dishHeight              - height of the dish (and of the cancer)
@@ -55,7 +55,7 @@ for i=1:dishSize
         %of cells corresponding to pS.
         if (rand() < spacingOffset*mean) && ((((i-dishSize/2)^2 +(j-dishSize/2)^2) < (radius^2)))
             %if (rand() < pMesen/100)
-                cells(i,j,1)=1;
+            cells(i,j,1)=1;
             %else
             %    cells(i,j,1)=2;
             %end
@@ -90,7 +90,7 @@ for step = 1:nbSteps % main loop
     y=mod(order/dishSize,dishSize)-mod(order/dishSize,1)+1;
     for i=1:dishSize^2 % and then we simulate each cell
         for j=1:dishHeight
-            nextStepCells = undergoFate(x(i),y(i),j,cells,nextStepCells,survivalRules,birthRules,maxToMove);
+            nextStepCells = undergoFate(x(i),y(i),j,cells,nextStepCells,survivalRules,birthRules,pMove,maxToMove);
         end
     end
     
@@ -116,8 +116,8 @@ end
 % --------------- GRAPHIC RELATED METHODS -----------------
 
 function saveSnapshot(zoom, folder, cells, step)
-[red,green,blue]=cellsToRGB(cells);
-[red2,green2,blue2] = zoomRGB(red,green,blue,zoom);
+[x,y,z] = size(cells);
+[red2,green2,blue2] = zoomRGB(zeros(x,y),cells,zeros(x,y),zoom);
 imwrite(cat(3,red2,green2,blue2),strcat(folder,'2D_snapshot_at_step_',num2str(step,'%04.0f'),'.png'));
 end
 
@@ -146,18 +146,14 @@ end
 % get the RGB matrice from the cells
 function [r,g,b] = cellsToRGB(cells)
 [x,y,z] = size(cells);
-r = zeros(x,y);
 g = zeros(x,y);
-b = zeros(x,y);
 for k = 1:z
     for i = 1:x
         for j = 1:y
             if cells(i,j,k)==0
                 continue;
             else
-                r(i,j) = (cells(i,j,k)==1);
-                g(i,j) = (cells(i,j,k)==2);
-                b(i,j) = (cells(i,j,k)==3);
+                g(i,j) = (cells(i,j,k)==1);
             end
         end
     end

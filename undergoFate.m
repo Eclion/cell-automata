@@ -1,4 +1,4 @@
-function newStepCells = undergoFate(x,y,z,cells, newStepCells,survivalRules,birthRules,maxToMove)
+function newStepCells = undergoFate(x,y,z,cells, newStepCells,survivalRules,birthRules,pMove, maxToMove)
 %determine the fate of the cell at position x,y,z, in function of the previous state for the birth/survival rule, but also in function of its current state, to see if it can move or not
 
 nz=size(cells,3);
@@ -14,7 +14,7 @@ if(cells(x,y,z)==0) %if there is no cell at grid(x,y), then check if a new one c
 elseif(cells(x,y,z)~=0)%else %if there is a cell at grid(x,y)
     if (~any(sum(neighbors(dz))-1 == survivalRules)) % '-1' because the current cell is living
         newStepCells(x,y,z) = 0;
-    elseif (sum(neighbors(dz))-1 <=maxToMove)%movement of the cells
+    elseif (rand()<=pMove/100)%movement of the cells
         availableNeighborPositions=listAvailableNeighborPositions(cells,newStepCells,x,y,z);
         rp=rand();%random number for the direction of the movement.
         availableNeighborPositionCount=size(availableNeighborPositions,1);

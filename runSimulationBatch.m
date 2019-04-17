@@ -1,6 +1,6 @@
-function runSimulationBatch(handles, rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, enableSnapshots, snapshotSteps, maxToMove)
+function runSimulationBatch(handles, rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, movePercentage, enableSnapshots, snapshotSteps, maxToMove)
 
-backupConfig(rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, enableSnapshots, snapshotSteps, maxToMove);
+backupConfig(rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, movePercentage, enableSnapshots, snapshotSteps, maxToMove);
 
 colors = 'brg';
 
@@ -24,7 +24,7 @@ curvesData = zeros(nbSimulations,nbSteps+1);
             drawnow;
         end
         
-        [a,b,c]=simulateCancer(enableSnapshots, dishSize,dishHeight,initNbCells,snapshotSteps,survivalPercentage/100,survival, birth,0,snapshotFolder,nbSteps,maxToMove);
+        [a,b,c]=simulateCancer(enableSnapshots, dishSize,dishHeight,initNbCells,snapshotSteps,survivalPercentage/100,survival, birth,movePercentage,snapshotFolder,nbSteps,maxToMove);
         
         data(1,i) = a;
         data(2,i) = b(nbSteps+1)/min(b);
@@ -44,7 +44,7 @@ curvesData = zeros(nbSimulations,nbSteps+1);
     save(strcat(rootFolder, 'cells.mat'), 'data', 'pts', 'mPercents');
 
 
-saveFigure(rootFolder, colors, curvesData, '');
+saveFigure(rootFolder, colors, curvesData);
 
 if(isstruct(handles))
     set(handles.progressText, 'string', strcat(num2str(nbSimulations), ' done.'));
@@ -54,7 +54,7 @@ end
 end
 
 
-function saveFigure(rootFolder, colors, points, mesenchymalPercentage)
+function saveFigure(rootFolder, colors, points)
 
 global isMatlab;
 if(isMatlab)
@@ -62,22 +62,16 @@ if(isMatlab)
 else
     f=figure();
 end
-for j=1:size(points, 2)
-    pts = points(j,:);
-    plot(0:(length(pts)-1),pts(:), 'Color','g', 'LineWidth',5);hold on;
-end
+
+plot(0:(length(points)-1),points(:), 'Color','g', 'LineWidth',5);hold on;
 xlabel('Time (in steps)')
 ylabel('Number of cells')
-if isempty(mesenchymalPercentage)
-    saveas(f,strcat(rootFolder, '/curves.png'));
-else
-    saveas(f,strcat(rootFolder, '/curves_with_',mesenchymalPercentage, '%MCells.png'));
-end
+saveas(f,strcat(rootFolder, '/curves.png'));
 close(f);
 
 end
 
-function backupConfig(rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, enableSnapshots, snapshotSteps, maxToMove)
+function backupConfig(rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, movePercentage, enableSnapshots, snapshotSteps, maxToMove)
 
 backupFileID = fopen(strcat(rootFolder, 'config.ini'), 'wt');
 
@@ -90,6 +84,7 @@ fprintf(backupFileID, 'MAX_SURVIVAL : %d;\n', max(survival));
 fprintf(backupFileID, 'NB_STEPS : %d;\n', nbSteps);
 fprintf(backupFileID, 'MAX_TO_MOVE : %d;\n', maxToMove);
 fprintf(backupFileID, 'PERCENTAGE_SURVIVAL : %s;\n', mat2str(survivalPercentage));
+fprintf(backupFileID, 'PERCENTAGE_MOVEMENT : %s;\n', mat2str(movePercentage));
 
 if(~isempty(snapshotSteps))
     fprintf(backupFileID, 'SNAPSHOT_STEPS : %s;\n', mat2str(snapshotSteps));
