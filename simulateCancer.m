@@ -43,27 +43,38 @@ Mpercents=zeros(1,nbSteps+1);
 %setup of the CA's variables
 cells=zeros(dishSize,dishSize,dishHeight);% 2: epithelial cells / 1: mesenchymal cells
 
-spacingOffset = 0.6;
-radius=sqrt(initialNumberOfCells/(spacingOffset*pi));
+% spacingOffset = 0.6;
+% radius=sqrt(initialNumberOfCells/(spacingOffset*pi));
+% 
+% for i=1:dishSize
+%     for j=1:dishSize
+%         %for each gridcell, a random number in the gamma
+%         %distribution pS is drawn, and another random number is
+%         %drawn from an uniform distribution, between 0 and 1. By
+%         %comparing these two number, we can have an average number
+%         %of cells corresponding to pS.
+%         if (rand() < spacingOffset*mean) && ((((i-dishSize/2)^2 +(j-dishSize/2)^2) < (radius^2)))
+%             %if (rand() < pMesen/100)
+%             cells(i,j,1)=1;
+%             %else
+%             %    cells(i,j,1)=2;
+%             %end
+%         end
+%     end
+% end
 
 for i=1:dishSize
-    for j=1:dishSize
-        %for each gridcell, a random number in the gamma
-        %distribution pS is drawn, and another random number is
-        %drawn from an uniform distribution, between 0 and 1. By
-        %comparing these two number, we can have an average number
-        %of cells corresponding to pS.
-        if (rand() < spacingOffset*mean) && ((((i-dishSize/2)^2 +(j-dishSize/2)^2) < (radius^2)))
-            %if (rand() < pMesen/100)
-            cells(i,j,1)=1;
-            %else
-            %    cells(i,j,1)=2;
-            %end
-        end
-    end
+   for j=1:dishSize
+       if (rand() < mean*(initialNumberOfCells/dishSize/dishSize))
+           if(rand()<pMove/100)
+               cells(i,j,1)=1;
+           else
+               cells(i,j,1)=2;
+           end
+       end
+   end
 end
-
-
+       
 nbCells(1)=sumCells(cells, 1) + sumCells(cells, 2);%initial (after treatment) number of cells
 if(nbCells(1) ~= 0)%if there is still some cells, we calculate the percentage of MCells
     Mpercents(1) = sumCells(cells, 1)/nbCells(1);
@@ -90,7 +101,7 @@ for step = 1:nbSteps % main loop
     y=mod(order/dishSize,dishSize)-mod(order/dishSize,1)+1;
     for i=1:dishSize^2 % and then we simulate each cell
         for j=1:dishHeight
-            nextStepCells = undergoFate(x(i),y(i),j,cells,nextStepCells,survivalRules,birthRules,pMove,maxToMove);
+            nextStepCells = undergoFate(x(i),y(i),j,cells,nextStepCells,survivalRules,birthRules,maxToMove);
         end
     end
     
@@ -117,7 +128,8 @@ end
 
 function saveSnapshot(zoom, folder, cells, step)
 [x,y,z] = size(cells);
-[red2,green2,blue2] = zoomRGB(zeros(x,y),cells,zeros(x,y),zoom);
+[red,green,blue]=cellsToRGB(cells);
+[red2,green2,blue2] = zoomRGB(red,green,blue,zoom);
 imwrite(cat(3,red2,green2,blue2),strcat(folder,'2D_snapshot_at_step_',num2str(step,'%04.0f'),'.png'));
 end
 
@@ -146,14 +158,18 @@ end
 % get the RGB matrice from the cells
 function [r,g,b] = cellsToRGB(cells)
 [x,y,z] = size(cells);
+r = zeros(x,y);
 g = zeros(x,y);
+b = zeros(x,y);
 for k = 1:z
     for i = 1:x
         for j = 1:y
             if cells(i,j,k)==0
                 continue;
             else
-                g(i,j) = (cells(i,j,k)==1);
+                r(i,j) = (cells(i,j,k)==1);
+                g(i,j) = (cells(i,j,k)==2);
+                b(i,j) = (cells(i,j,k)==3);
             end
         end
     end

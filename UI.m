@@ -117,9 +117,10 @@ handles.birthPart5 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'u
 % ----- fifth rule ----------------------
 
 moveLineY = 0.25;
-%handles.movePart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 moveLineY 0.18 lineSize], 'string', 'v) Any cell with < ', 'fontsize',10, 'horizontalalignment', 'left');
-%handles.maxToMove = uicontrol ('parent', handles.rulePanel, 'style', 'edit', 'units', 'normalized', 'position', [0.20 moveLineY 0.09 lineSize], 'string', '3', 'fontsize',10, 'horizontalalignment', 'center', 'callback', @maxToMove_Callback);
-%handles.movePart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 moveLineY 0.7 lineSize], 'string', 'live neighbors is able to move randomly to an empty cell on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
+handles.movePart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 moveLineY 0.18 lineSize], 'string', 'v) Any cell with <= ', 'fontsize',10, 'horizontalalignment', 'left');
+handles.maxToMove = uicontrol ('parent', handles.rulePanel, 'style', 'edit', 'units', 'normalized', 'position', [0.20 moveLineY 0.09 lineSize], 'string', '3', 'fontsize',10, 'horizontalalignment', 'center', 'callback', @maxToMove_Callback);
+handles.movePart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 moveLineY 0.7 lineSize], 'string', 'live neighbors is able to move randomly to an empty cell on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
+handles.movePart4 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 moveLineY 0.0 lineSize], 'string', 'Cells with more live neighbors than this number become on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
 
 end
 function handles = createGraphicParamsUI(handles, enableSnapshots, snapshotSteps)
@@ -519,7 +520,7 @@ end
 function runSimulationButton_Callback(obj, init)
 
 global workFolder;
-rootFolder = strcat(workFolder, '/Simulations/');
+rootFolder = strcat(workFolder, '/Simulations_/');
 date = datestr(now, 'yyyy-mm-dd_HHMMSS');
 dataFolder = strcat(rootFolder,date, '/');
 
@@ -559,7 +560,8 @@ maxBirth = str2num(get(handles.maximumBirth, 'string'));
 birth = minBirth:maxBirth;
 
 % TODO rule maxToMove
-maxToMove=2;
+%maxToMove=2;
+maxToMove = str2num(get(handles.maxToMove, 'string'));
     
 runSimulationBatch(handles, rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, movePercentage, enableSnapshots, snapshotSteps, maxToMove);
 
