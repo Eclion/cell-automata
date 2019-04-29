@@ -30,13 +30,13 @@ minSurvival = getFromConfigOrDefault('MIN_SURVIVAL',2);
 maxSurvival = getFromConfigOrDefault('MAX_SURVIVAL',3);
 minBirth = getFromConfigOrDefault('MIN_BIRTH',3);
 maxBirth = getFromConfigOrDefault('MAX_BIRTH',3);
-percentageSurvival = getFromConfigOrDefault('PERCENTAGE_SURVIVAL', 0);
+mvtRule = getFromConfigOrDefault('MVT_RULE', [2 3]);
 percentageMove = getFromConfigOrDefault('PERCENTAGE_MOVEMENT', 0);
 enableSnapshots = strcmp(getFromConfigOrDefault('SAVE_SNAPSHOTS', 'OFF'), 'ON');
 
 handles2 = createRulesUI(handles);
 handles3 = createGraphicParamsUI(handles2, enableSnapshots, snapshotSteps);
-handles4 = createSimulationParamsUI(handles3, numberOfSimulations, numberOfSteps, initialNumberOfCells, percentageSurvival, percentageMove);
+handles4 = createSimulationParamsUI(handles3, numberOfSimulations, numberOfSteps, initialNumberOfCells, mvtRule, percentageMove);
 handles5 = createDishParamsUI(handles4, dishSize);
 
 guidata (f, handles5)
@@ -88,22 +88,22 @@ lineSize = 0.10;
 
 % ----- first rule ----------------------
 minSurvLineY = 0.85;
-handles.minSurvPart1 = uicontrol('parent',handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 minSurvLineY 0.18 lineSize], 'string', 'i)   Any cell with < ', 'fontsize',10, 'horizontalalignment', 'left');
-handles.minimumSurvival = uicontrol ('parent', handles.rulePanel, 'style', 'edit', 'units', 'normalized', 'position', [0.20 minSurvLineY 0.09 lineSize], 'string', '2', 'fontsize',10, 'horizontalalignment', 'center', 'callback', @minimumSurvival_Callback);
-handles.minSurvPart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 minSurvLineY 0.5 lineSize], 'string', 'live neighbors dies, caused by under-population.', 'fontsize',10, 'horizontalalignment', 'left');
+handles.minSurvPart1 = uicontrol('parent',handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 minSurvLineY 0.23 lineSize], 'string', 'i)   Any immotile cell with < ', 'fontsize',10, 'horizontalalignment', 'left');
+handles.minimumSurvival = uicontrol ('parent', handles.rulePanel, 'style', 'edit', 'units', 'normalized', 'position', [0.25 minSurvLineY 0.09 lineSize], 'string', '2', 'fontsize',10, 'horizontalalignment', 'center', 'callback', @minimumSurvival_Callback);
+handles.minSurvPart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.36 minSurvLineY 0.5 lineSize], 'string', 'live neighbors dies, caused by under-population.', 'fontsize',10, 'horizontalalignment', 'left');
 
 % ----- second rule ----------------------
-survivalLineY = 0.70;
-handles.survivalPart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 survivalLineY 0.18 lineSize], 'string', 'ii)  Any cell with ', 'fontsize',10, 'horizontalalignment', 'left');
-handles.survival = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.20 survivalLineY 0.09 lineSize], 'string', {'2 to 3'}, 'fontsize',10, 'horizontalalignment', 'center');
-handles.survivalPart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 survivalLineY 0.5 lineSize], 'string', 'live neighbors lives on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
+mvtRuleLineY = 0.70;
+handles.mvtRulePart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 mvtRuleLineY 0.18 lineSize], 'string', 'ii)  Any motile cell with ', 'fontsize',10, 'horizontalalignment', 'left');
+handles.mvtRule = uicontrol ('parent', handles.rulePanel, 'style', 'edit', 'units', 'normalized', 'position', [0.20 mvtRuleLineY 0.09 lineSize], 'string', '3', 'fontsize',10, 'horizontalalignment', 'center', 'callback', @mvtRule_Callback);
+handles.mvtRulePart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 mvtRuleLineY 0.5 lineSize], 'string', 'live neighbors becomes immotile on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
 
 
 % ----- third rule ----------------------
 maxSurvLineY = 0.55;
-handles.maxSurvPart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 maxSurvLineY 0.18 lineSize], 'string', 'iii) Any cell with > ', 'fontsize',10, 'horizontalalignment', 'left');
-handles.maximumSurvival = uicontrol ('parent', handles.rulePanel, 'style', 'edit', 'units', 'normalized', 'position', [0.20 maxSurvLineY 0.09 lineSize], 'string', '3', 'fontsize',10, 'horizontalalignment', 'center', 'callback', @maximumSurvival_Callback);
-handles.maxSurvPart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 maxSurvLineY 0.5 lineSize], 'string', 'live neighbors dies, caused by overcrowding.', 'fontsize',10, 'horizontalalignment', 'left');
+handles.maxSurvPart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 maxSurvLineY 0.23 lineSize], 'string', 'iii) Any immotile cell with > ', 'fontsize',10, 'horizontalalignment', 'left');
+handles.maximumSurvival = uicontrol ('parent', handles.rulePanel, 'style', 'edit', 'units', 'normalized', 'position', [0.25 maxSurvLineY 0.09 lineSize], 'string', '3', 'fontsize',10, 'horizontalalignment', 'center', 'callback', @maximumSurvival_Callback);
+handles.maxSurvPart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.36 maxSurvLineY 0.5 lineSize], 'string', 'live neighbors dies, caused by overcrowding.', 'fontsize',10, 'horizontalalignment', 'left');
 
 
 % ----- fourth rule ----------------------
@@ -117,9 +117,7 @@ handles.birthPart5 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'u
 % ----- fifth rule ----------------------
 
 moveLineY = 0.25;
-handles.movePart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 moveLineY 0.18 lineSize], 'string', 'v) Any MB cell with ', 'fontsize',10, 'horizontalalignment', 'left');
-handles.maxToMove = uicontrol ('parent', handles.rulePanel, 'style', 'edit', 'units', 'normalized', 'position', [0.20 moveLineY 0.09 lineSize], 'string', '3', 'fontsize',10, 'horizontalalignment', 'center', 'callback', @maxToMove_Callback);
-handles.movePart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 moveLineY 0.7 lineSize], 'string', 'live neighbors will become an IB cell on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
+handles.movePart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 moveLineY 0.90 lineSize], 'string', 'v) Any motile cell can move randomly.', 'fontsize',10, 'horizontalalignment', 'left');
 
 end
 function handles = createGraphicParamsUI(handles, enableSnapshots, snapshotSteps)
@@ -132,7 +130,7 @@ handles.snapshotStepsText = uicontrol ('parent', handles.graphicPanel, 'style', 
 handles.snapshotSteps = uicontrol ('parent', handles.graphicPanel, 'style', 'edit', 'units', 'normalized', 'position', [0.48 lineY 0.50 0.15], 'string', num2str(snapshotSteps), 'fontsize',10, 'horizontalalignment', 'center', 'callback', @snapshotSteps_Callback);
 
 end
-function handles = createSimulationParamsUI(handles, numberOfSimulations, numberOfSteps, initialNumberOfCells, percentageSurvival, percentageMove)
+function handles = createSimulationParamsUI(handles, numberOfSimulations, numberOfSteps, initialNumberOfCells, mvtRule, percentageMove)
 boxX = 0.70;
 textWidth = boxX - 0.03;
 boxWidth = 1 - boxX - 0.02;
@@ -154,13 +152,13 @@ handles.initialNumberOfCellsText = uicontrol ('parent', handles.simulationPanel,
 
 handles.initialNumberOfCells = uicontrol ('parent', handles.simulationPanel, 'style', 'edit', 'units', 'normalized', 'position', [boxX thirdLineY boxWidth height], 'string', num2str(initialNumberOfCells), 'fontsize',10, 'horizontalalignment', 'center', 'callback', @initialNumberOfCells_Callback);
 
-fourthLineY = 0.15;
-handles.percentageSurvivalText = uicontrol ('parent', handles.simulationPanel, 'style', 'text', 'units', 'normalized', 'position', [0.02 fourthLineY textWidth height], 'string', '% of surviving cells [0-100]:', 'fontsize',10, 'horizontalalignment', 'left');
+%fourthLineY = 0.15;
+%handles.percentageSurvivalText = uicontrol ('parent', handles.simulationPanel, 'style', 'text', 'units', 'normalized', 'position', [0.02 fourthLineY textWidth height], 'string', '% of surviving cells [0-100]:', 'fontsize',10, 'horizontalalignment', 'left');
 
-handles.percentageSurvival = uicontrol ('parent', handles.simulationPanel, 'style', 'edit', 'units', 'normalized', 'position', [boxX fourthLineY boxWidth height], 'string', num2str(percentageSurvival), 'fontsize',10, 'horizontalalignment', 'center', 'callback', @percentageSurvival_Callback);
+%handles.percentageSurvival = uicontrol ('parent', handles.simulationPanel, 'style', 'edit', 'units', 'normalized', 'position', [boxX fourthLineY boxWidth height], 'string', num2str(percentageSurvival), 'fontsize',10, 'horizontalalignment', 'center', 'callback', @percentageSurvival_Callback);
 
 
-fifthLineY = 0.0;
+fifthLineY = 0.150;
 handles.percentageMoveText = uicontrol ('parent', handles.simulationPanel, 'style', 'text', 'units', 'normalized', 'position', [0.02 fifthLineY textWidth height], 'string', 'movement probability [0-100]:', 'fontsize',10, 'horizontalalignment', 'left');
 
 handles.percentageMove = uicontrol ('parent', handles.simulationPanel, 'style', 'edit', 'units', 'normalized', 'position', [boxX fifthLineY boxWidth height], 'string', num2str(percentageMove), 'fontsize',10, 'horizontalalignment', 'center', 'callback', @percentageMove_Callback);
@@ -316,23 +314,6 @@ guidata(hObject, handles)
 
 end
 
-function percentageSurvival_Callback(hObject, init)
-
-handles = guidata (hObject);
-
-percentageSurvival = str2num(get(hObject, 'string'));
-
-if ~iscorrectnumber(percentageSurvival)
-    set(hObject, 'string', '');
-    errordlg('The percentage of survival cells at start must be a numbers', 'Error');
-else
-    set(hObject, 'string', num2str(percentageSurvival));
-end
-
-guidata(hObject, handles)
-
-end
-
 function percentageMove_Callback(hObject, init)
 
 handles = guidata (hObject);
@@ -461,8 +442,6 @@ else
     set(hObject, 'string', num2str(minimumSurvival));
 end
 
-set(handles.survival, 'string', char(strcat(num2str(minimumSurvival), {' to '}, num2str(maximumSurvival))));
-
 guidata(hObject, handles)
 
 end
@@ -487,27 +466,25 @@ else
     set(hObject, 'string', num2str(maximumSurvival));
 end
 
-set(handles.survival, 'string', char(strcat(num2str(minimumSurvival), {' to '}, num2str(maximumSurvival))));
-
 guidata(hObject, handles)
 
 end
 
-function maxToMove_Callback(hObject, init)
+function mvtRule_Callback(hObject, init)
 
 handles = guidata (hObject);
 
-maxToMove = str2num(get(hObject, 'string'));
+mvtRule = str2num(get(hObject, 'string'));
 
-if ~iscorrectnumberarray(maxToMove)
+if ~iscorrectnumberarray(mvtRule)
     set(hObject, 'string', '2, 3');
-    errordlg('The maximum number of living neighbor cell required for a living cell to move must be a number.', 'Error');
-    maxToMove = [2 3];
+    errordlg('The number of cells required for a motile cell become immotile should be an array of number.', 'Error');
+    mvtRule = [2 3];
 else
-    set(hObject, 'string', num2str(maxToMove));
+    set(hObject, 'string', num2str(mvtRule));
 end
 
-set(handles.maxToMove, 'string', num2str(maxToMove));
+set(handles.mvtRule, 'string', num2str(mvtRule));
 
 guidata(hObject, handles)
 
@@ -544,7 +521,8 @@ nbSteps = str2num(get(handles.numberOfSteps, 'string'));
 dishSize = str2num(get(handles.dishSize, 'string'));
 dishHeight = str2num(get(handles.dishHeight, 'string'));
 initNbCells = str2num(get(handles.initialNumberOfCells, 'string'));
-survivalPercentage = str2num(get(handles.percentageSurvival, 'string'));
+%survivalPercentage = str2num(get(handles.percentageSurvival, 'string'));
+survivalPercentage = 5;
 movePercentage = str2num(get(handles.percentageMove, 'string'));
 snapshotSteps = [];
 if(enableSnapshots)
@@ -558,11 +536,9 @@ minBirth = str2num(get(handles.minimumBirth, 'string'));
 maxBirth = str2num(get(handles.maximumBirth, 'string'));
 birth = minBirth:maxBirth;
 
-% TODO rule maxToMove
-%maxToMove=2;
-maxToMove = str2num(get(handles.maxToMove, 'string'));
+mvtRule = str2num(get(handles.mvtRule, 'string'));
     
-runSimulationBatch(handles, rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, movePercentage, enableSnapshots, snapshotSteps, maxToMove);
+runSimulationBatch(handles, rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, movePercentage, enableSnapshots, snapshotSteps, mvtRule);
 
 
 disp('End of the simulations.')

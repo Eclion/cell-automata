@@ -1,6 +1,6 @@
-function runSimulationBatch(handles, rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, movePercentage, enableSnapshots, snapshotSteps, maxToMove)
+function runSimulationBatch(handles, rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, movePercentage, enableSnapshots, snapshotSteps, mvtRule)
 
-backupConfig(rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, movePercentage, enableSnapshots, snapshotSteps, maxToMove);
+backupConfig(rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, movePercentage, enableSnapshots, snapshotSteps, mvtRule);
 
 colors = 'brg';
 
@@ -24,7 +24,7 @@ curvesData = zeros(nbSimulations,nbSteps+1);
             drawnow;
         end
         
-        [a,b,c]=simulateCancer(enableSnapshots, dishSize,dishHeight,initNbCells,snapshotSteps,survivalPercentage/100,survival, birth,movePercentage,snapshotFolder,nbSteps,maxToMove);
+        [a,b,c]=simulateCancer(enableSnapshots, dishSize,dishHeight,initNbCells,snapshotSteps,survivalPercentage/100,survival, birth,movePercentage,snapshotFolder,nbSteps,mvtRule);
         
         data(1,i) = a;
         data(2,i) = b(nbSteps+1)/min(b);
@@ -79,7 +79,7 @@ close(f);
 
 end
 
-function backupConfig(rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, movePercentage, enableSnapshots, snapshotSteps, maxToMove)
+function backupConfig(rootFolder, survivalPercentage, dishSize, dishHeight, initNbCells, nbSimulations, nbSteps, survival, birth, movePercentage, enableSnapshots, snapshotSteps, mvtRule)
 
 backupFileID = fopen(strcat(rootFolder, 'config.ini'), 'wt');
 
@@ -90,7 +90,7 @@ fprintf(backupFileID, 'MIN_BIRTH : %d;\n', min(birth));
 fprintf(backupFileID, 'MIN_SURVIVAL : %d;\n', min(survival));
 fprintf(backupFileID, 'MAX_SURVIVAL : %d;\n', max(survival));
 fprintf(backupFileID, 'NB_STEPS : %d;\n', nbSteps);
-fprintf(backupFileID, 'MAX_TO_MOVE : %d;\n', maxToMove);
+fprintf(backupFileID, 'MVT_RULE : %s;\n', mat2str(mvtRule));
 fprintf(backupFileID, 'PERCENTAGE_SURVIVAL : %s;\n', mat2str(survivalPercentage));
 fprintf(backupFileID, 'PERCENTAGE_MOVEMENT : %s;\n', mat2str(movePercentage));
 
