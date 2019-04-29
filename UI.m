@@ -117,10 +117,9 @@ handles.birthPart5 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'u
 % ----- fifth rule ----------------------
 
 moveLineY = 0.25;
-handles.movePart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 moveLineY 0.18 lineSize], 'string', 'v) Any cell with <= ', 'fontsize',10, 'horizontalalignment', 'left');
+handles.movePart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 moveLineY 0.18 lineSize], 'string', 'v) Any MB cell with ', 'fontsize',10, 'horizontalalignment', 'left');
 handles.maxToMove = uicontrol ('parent', handles.rulePanel, 'style', 'edit', 'units', 'normalized', 'position', [0.20 moveLineY 0.09 lineSize], 'string', '3', 'fontsize',10, 'horizontalalignment', 'center', 'callback', @maxToMove_Callback);
-handles.movePart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 moveLineY 0.7 lineSize], 'string', 'live neighbors is able to move randomly to an empty cell on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
-handles.movePart4 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 moveLineY 0.0 lineSize], 'string', 'Cells with more live neighbors than this number become on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
+handles.movePart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 moveLineY 0.7 lineSize], 'string', 'live neighbors will become an IB cell on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
 
 end
 function handles = createGraphicParamsUI(handles, enableSnapshots, snapshotSteps)
@@ -500,10 +499,10 @@ handles = guidata (hObject);
 
 maxToMove = str2num(get(hObject, 'string'));
 
-if ~iscorrectnumber(maxToMove)
-    set(hObject, 'string', num2str(0));
+if ~iscorrectnumberarray(maxToMove)
+    set(hObject, 'string', '2, 3');
     errordlg('The maximum number of living neighbor cell required for a living cell to move must be a number.', 'Error');
-    maxToMove = 0;
+    maxToMove = [2 3];
 else
     set(hObject, 'string', num2str(maxToMove));
 end

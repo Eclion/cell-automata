@@ -22,12 +22,14 @@ if(cells(x,y,z)==0) %if there is no cell at grid(x,y), then check if a new one c
 elseif(cells(x,y,z)~=0)%else %if there is a cell at grid(x,y)
     if (~any(sum(nNeighbors(dz))-1 == survivalRules) && cells(x,y,z)==2) % '-1' because the current cell is living
         newStepCells(x,y,z) = 0;
-     elseif (sum(nNeighbors(dz))-1 <= maxToMove && cells(x,y,z)==2) % '-1' because the current cell is living
-         newStepCells(x,y,z) = 1;
-    elseif (cells(x,y,z)==1)%movement of the cells
-        if (sum(nNeighbors(dz))-1 > maxToMove)
+%      elseif (sum(nNeighbors(dz))-1 <= maxToMove && cells(x,y,z)==2) % '-1' because the current cell is living
+%          newStepCells(x,y,z) = 1; % no IB-> MB mechanism
+    elseif(~any(sum(nNeighbors(dz))-1 == maxToMove) && cells(x,y,z)==1)
             newStepCells(x,y,z) = 2;
-        else
+    elseif (cells(x,y,z)==1)%movement of the cells
+%         if (sum(nNeighbors(dz))-1 > maxToMove) % V1
+%             newStepCells(x,y,z) = 2;
+%         else
             availableNeighborPositions=listAvailableNeighborPositions(cells,newStepCells,x,y,z);
             rp=rand();%random number for the direction of the movement.
             availableNeighborPositionCount=size(availableNeighborPositions,1);
@@ -39,7 +41,7 @@ elseif(cells(x,y,z)~=0)%else %if there is a cell at grid(x,y)
                 newStepCells(x,y,z) = 0;
             else
                 newStepCells(x,y,z) = 2;
-            end
+%             end
         end
         
         
