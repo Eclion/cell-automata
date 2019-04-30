@@ -24,8 +24,8 @@ elseif(cells(x,y,z)~=0)%else %if there is a cell at grid(x,y)
         newStepCells(x,y,z) = 0;
 %      elseif (sum(nNeighbors(dz))-1 <= maxToMove && cells(x,y,z)==2) % '-1' because the current cell is living
 %          newStepCells(x,y,z) = 1; % no IB-> MB mechanism
-    elseif(~any(sum(nNeighbors(dz))-1 == maxToMove) && cells(x,y,z)==1)
-            newStepCells(x,y,z) = 2;
+    elseif(~any(sum(nNeighbors(dz))-1 == maxToMove) && cells(x,y,z)==2)
+            newStepCells(x,y,z) = 1;
     elseif (cells(x,y,z)==1)%movement of the cells
 %         if (sum(nNeighbors(dz))-1 > maxToMove) % V1
 %             newStepCells(x,y,z) = 2;

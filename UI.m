@@ -94,9 +94,9 @@ handles.minSurvPart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 
 
 % ----- second rule ----------------------
 mvtRuleLineY = 0.70;
-handles.mvtRulePart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 mvtRuleLineY 0.18 lineSize], 'string', 'ii)  Any motile cell with ', 'fontsize',10, 'horizontalalignment', 'left');
-handles.mvtRule = uicontrol ('parent', handles.rulePanel, 'style', 'edit', 'units', 'normalized', 'position', [0.20 mvtRuleLineY 0.09 lineSize], 'string', '3', 'fontsize',10, 'horizontalalignment', 'center', 'callback', @mvtRule_Callback);
-handles.mvtRulePart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.31 mvtRuleLineY 0.5 lineSize], 'string', 'live neighbors becomes immotile on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
+handles.mvtRulePart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 mvtRuleLineY 0.23 lineSize], 'string', 'ii)  Any immotile cell with ', 'fontsize',10, 'horizontalalignment', 'left');
+handles.mvtRule = uicontrol ('parent', handles.rulePanel, 'style', 'edit', 'units', 'normalized', 'position', [0.25 mvtRuleLineY 0.09 lineSize], 'string', '2 3', 'fontsize',10, 'horizontalalignment', 'center', 'callback', @mvtRule_Callback);
+handles.mvtRulePart3 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.36 mvtRuleLineY 0.5 lineSize], 'string', 'live neighbors becomes motile on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
 
 
 % ----- third rule ----------------------
@@ -118,6 +118,9 @@ handles.birthPart5 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'u
 
 moveLineY = 0.25;
 handles.movePart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 moveLineY 0.90 lineSize], 'string', 'v) Any motile cell can move randomly.', 'fontsize',10, 'horizontalalignment', 'left');
+
+handles.moveUnablePart1 = uicontrol ('parent', handles.rulePanel, 'style', 'text', 'units', 'normalized', 'position', [0.01 0.1 0.90 lineSize], 'string', 'vi) Any motile cell that cannot move becomes immotile on the next generation.', 'fontsize',10, 'horizontalalignment', 'left');
+
 
 end
 function handles = createGraphicParamsUI(handles, enableSnapshots, snapshotSteps)
@@ -522,7 +525,8 @@ dishSize = str2num(get(handles.dishSize, 'string'));
 dishHeight = str2num(get(handles.dishHeight, 'string'));
 initNbCells = str2num(get(handles.initialNumberOfCells, 'string'));
 %survivalPercentage = str2num(get(handles.percentageSurvival, 'string'));
-survivalPercentage = 5;
+%survivalPercentage = 5;
+survivalPercentage = getFromConfigOrDefault('PERCENTAGE_SURVIVAL', 11);
 movePercentage = str2num(get(handles.percentageMove, 'string'));
 snapshotSteps = [];
 if(enableSnapshots)
