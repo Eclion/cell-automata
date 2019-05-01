@@ -40,32 +40,34 @@ nbCells=zeros(nbSteps+1,1);
 
 Mpercents=zeros(1,nbSteps+1);
 
-%setup of the CA's variables
+% setup of the CA's variables
 cells=zeros(dishSize,dishSize,dishHeight);% 2: epithelial cells / 1: mesenchymal cells
 
-% spacingOffset = 0.6;
-% radius=sqrt(initialNumberOfCells/(spacingOffset*pi));
-% 
-% for i=1:dishSize
-%     for j=1:dishSize
-%         %for each gridcell, a random number in the gamma
-%         %distribution pS is drawn, and another random number is
-%         %drawn from an uniform distribution, between 0 and 1. By
-%         %comparing these two number, we can have an average number
-%         %of cells corresponding to pS.
-%         if (rand() < spacingOffset*mean) && ((((i-dishSize/2)^2 +(j-dishSize/2)^2) < (radius^2)))
-%             %if (rand() < pMesen/100)
-%             cells(i,j,1)=1;
-%             %else
-%             %    cells(i,j,1)=2;
-%             %end
-%         end
-%     end
-% end
+spacingOffset = 0.6;
+isRound=false;
+if(isRound)
+radius=sqrt(initialNumberOfCells/(spacingOffset*pi));
 
 for i=1:dishSize
+    for j=1:dishSize
+        %for each gridcell, a random number in the gamma
+        %distribution pS is drawn, and another random number is
+        %drawn from an uniform distribution, between 0 and 1. By
+        %comparing these two number, we can have an average number
+        %of cells corresponding to pS.
+        if (rand() < spacingOffset*mean) && ((((i-dishSize/2)^2 +(j-dishSize/2)^2) < (radius^2)))
+            if (rand() < pMove/100)
+            cells(i,j,1)=1;
+            else
+               cells(i,j,1)=2;
+            end
+        end
+    end
+end
+else
+for i=1:dishSize
    for j=1:dishSize
-       if (rand() < mean*(initialNumberOfCells/dishSize/dishSize))
+       if (rand() < mean*initialNumberOfCells/dishSize/dishSize)
            if(rand()<pMove/100)
                cells(i,j,1)=1;
            else
@@ -74,7 +76,8 @@ for i=1:dishSize
        end
    end
 end
-       
+end    
+
 nbCells(1)=sumCells(cells, 1) + sumCells(cells, 2);%initial (after treatment) number of cells
 if(nbCells(1) ~= 0)%if there is still some cells, we calculate the percentage of MCells
     Mpercents(1) = sumCells(cells, 1)/nbCells(1);

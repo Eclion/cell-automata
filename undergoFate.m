@@ -16,15 +16,13 @@ if(cells(x,y,z)==0) %if there is no cell at grid(x,y), then check if a new one c
         else
             newStepCells(x,y,z)=1;% a mesenchymal cell is born
         end
-    else
-        newStepCells(x,y,z)=0;
     end
 elseif(cells(x,y,z)~=0)%else %if there is a cell at grid(x,y)
     if (~any(sum(nNeighbors(dz))-1 == survivalRules) && cells(x,y,z)==2) % '-1' because the current cell is living
         newStepCells(x,y,z) = 0;
 %      elseif (sum(nNeighbors(dz))-1 <= maxToMove && cells(x,y,z)==2) % '-1' because the current cell is living
 %          newStepCells(x,y,z) = 1; % no IB-> MB mechanism
-    elseif(~any(sum(nNeighbors(dz))-1 == maxToMove) && cells(x,y,z)==2)
+    elseif(any(sum(nNeighbors(dz))-1 == maxToMove) && cells(x,y,z)==2)
             newStepCells(x,y,z) = 1;
     elseif (cells(x,y,z)==1)%movement of the cells
 %         if (sum(nNeighbors(dz))-1 > maxToMove) % V1
