@@ -34,8 +34,8 @@ curvesData = zeros(nbSimulations,nbSteps+1);
         if(isstruct(handles))
             cellbase=10000;
             expTime = [0 1 2 3]*(length(b)-1)/3;
-            plot(expTime,[0 2.5 10 15]*cellbase, 'Color','r', 'LineWidth',5);hold on;
-            plot(expTime,[0 0 0 5]*cellbase, 'Color','b', 'LineWidth',5);hold on;
+            plot(expTime,[0 2.5 10 15]*cellbase,'--', 'Color','r', 'LineWidth',5);hold on;
+            plot(expTime,[0 0 0 5]*cellbase, '--','Color','b', 'LineWidth',5);hold on;
             plot(0:nbSteps,b(:), 'Color','g', 'LineWidth',5);hold on;
             drawnow;
         end
@@ -71,7 +71,10 @@ cellbase=10000;
 expTime = [0 1 2 3]*(length(points)-1)/3;
 plot(expTime,[0 2.5 10 15]*cellbase, 'Color','r', 'LineWidth',5);hold on;
 plot(expTime,[0 0 0 5]*cellbase, 'Color','b', 'LineWidth',5);hold on;
-plot(0:(length(points)-1),points(:), 'Color','g', 'LineWidth',5);hold on;
+    for j=1:size(points, 1)
+        pts = points(j,:);
+        plot(0:(length(pts)-1),pts(:), 'Color','g', 'LineWidth',5);hold on;
+    end
 xlabel('Time (in steps)')
 ylabel('Number of cells')
 saveas(f,strcat(rootFolder, '/curves.png'));

@@ -170,9 +170,9 @@ for k = 1:z
             if cells(i,j,k)==0
                 continue;
             else
-                r(i,j) = (cells(i,j,k)==1);
-                g(i,j) = (cells(i,j,k)==2);
-                b(i,j) = (cells(i,j,k)==3);
+                %r(i,j) = (cells(i,j,k)==1);
+                g(i,j) = (cells(i,j,k)~=0);
+                %b(i,j) = (cells(i,j,k)==3);
             end
         end
     end
