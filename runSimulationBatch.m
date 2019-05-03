@@ -69,8 +69,8 @@ end
 
 cellbase=10000;
 expTime = [0 1 2 3]*(length(points)-1)/3;
-plot(expTime,[0 2.5 10 15]*cellbase, 'Color','r', 'LineWidth',5);hold on;
-plot(expTime,[0 0 0 5]*cellbase, 'Color','b', 'LineWidth',5);hold on;
+plot(expTime,[0 2.5 10 15]*cellbase,'--', 'Color','r', 'LineWidth',5);hold on;
+plot(expTime,[0 0 0 5]*cellbase, '--','Color','b', 'LineWidth',5);hold on;
     for j=1:size(points, 1)
         pts = points(j,:);
         plot(0:(length(pts)-1),pts(:), 'Color','g', 'LineWidth',5);hold on;
