@@ -524,9 +524,7 @@ nbSteps = str2num(get(handles.numberOfSteps, 'string'));
 dishSize = str2num(get(handles.dishSize, 'string'));
 dishHeight = str2num(get(handles.dishHeight, 'string'));
 initNbCells = str2num(get(handles.initialNumberOfCells, 'string'));
-%survivalPercentage = str2num(get(handles.percentageSurvival, 'string'));
-%survivalPercentage = 5;
-survivalPercentage = str2num(getFromConfigOrDefault('PERCENTAGE_SURVIVAL', 11));
+survivalPercentage = str2num(getFromConfigOrDefault('PERCENTAGE_SURVIVAL', 100));
 movePercentage = str2num(get(handles.percentageMove, 'string'));
 snapshotSteps = [];
 if(enableSnapshots)
